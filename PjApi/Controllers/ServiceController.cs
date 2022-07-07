@@ -14,8 +14,8 @@ namespace PjApi.Controllers
     public class ServiceController : ApiController
     {
         customer_bookingsTableAdapter bookingAdapter = new customer_bookingsTableAdapter();
-        getServicesForMobileTableAdapter serviceAdapter = new getServicesForMobileTableAdapter();
-        errorsTableAdapter errorAdapter = new errorsTableAdapter();
+        seatsTableAdapter seatAdapter = new seatsTableAdapter();
+        servicesTableAdapter srvcAdapter = new servicesTableAdapter();
         dsMain ds = new dsMain();
         dsProc dsproc = new dsProc();
 
@@ -26,8 +26,9 @@ namespace PjApi.Controllers
             ResponseMessage m;
             try
             {
-                bookingAdapter.addService(s.bookingId, s.serviceId, s.receptionId, s.seatId,
-                    s.timeIn, s.timeOut, DateTime.Parse(s.bookedDt), s.serviceStatus, s.stylists, s.receptionId);
+                DateTime booked_dt = DateTime.Parse(s.bookedDt);
+              bookingAdapter.addService(s.bookingId, s.serviceId, s.stylistId, s.seatId,
+                    s.timeIn, s.timeOut,booked_dt , s.serviceStatus, s.stylists);
 
                 m = new ResponseMessage(true, "Success");
 
@@ -35,20 +36,18 @@ namespace PjApi.Controllers
             catch (Exception ex)
             {
                 m = new ResponseMessage(false, ex.Message);
-                errorAdapter.Insert("ServiceController: " + ex.Message);
+                CatalogAccessController.CatalogAccess.Log_Error("ServiceController: " + ex.Message);
             }
             return Ok(m);
         }
 
         [HttpGet]
-        // POST api/Notification
         public IHttpActionResult getServicesForBooking(int bookingId)
         {
             try
             {
-                serviceAdapter.Fill(dsproc.getServicesForMobile, bookingId);
 
-                List<CustomerServices> services = dsproc.getServicesForMobile.AsEnumerable()
+                List<CustomerServices> services = CatalogAccessController.CatalogAccess.GetServicesForMobile().AsEnumerable()
                  .Select(dataRow => new CustomerServices
                  {
                      customerServiceId = dataRow.Field<int>("customer_service_id"),
@@ -72,7 +71,58 @@ namespace PjApi.Controllers
             }
             catch (Exception ex)
             {
-                errorAdapter.Insert("ServiceController: " + ex.Message);
+                CatalogAccessController.CatalogAccess.Log_Error("ServiceController: " + ex.Message);
+                return NotFound();
+            }
+        }
+
+        [HttpGet]
+        [Route("api/service/services")]
+        public IHttpActionResult getServices()
+        {
+            try
+            {
+                srvcAdapter.Fill(ds.services);
+
+                List<Services> services = ds.services.AsEnumerable()
+                 .Select(dataRow => new Services
+                 {
+                     serviceId = dataRow.Field<int>("serviceId"),
+                     service = dataRow.Field<string>("service"),
+                     price = dataRow.Field<int>("price")
+                 }).ToList();
+
+
+                return Ok(services);
+            }
+            catch (Exception ex)
+            {
+                CatalogAccessController.CatalogAccess.Log_Error("ServiceController: " + ex.Message);
+                return NotFound();
+            }
+        }
+
+        [HttpGet]
+        [Route("api/service/seats")]
+        public IHttpActionResult getSeats()
+        {
+            try
+            {
+                seatAdapter.Fill(ds.seats);
+
+                List<Seat> s = ds.seats.AsEnumerable()
+                 .Select(dataRow => new Seat
+                 {
+                     seatId = dataRow.Field<int>("seatId"),
+                     seat = dataRow.Field<string>("seat")
+                 }).ToList();
+
+
+                return Ok(s);
+            }
+            catch (Exception ex)
+            {
+                CatalogAccessController.CatalogAccess.Log_Error("ServiceController: " + ex.Message);
                 return NotFound();
             }
         }

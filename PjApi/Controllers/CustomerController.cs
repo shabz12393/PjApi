@@ -15,7 +15,6 @@ namespace PjApi.Controllers
 {
     public class CustomerController : ApiController
     {
-        errorsTableAdapter errorAdapter = new errorsTableAdapter();
         dsMain ds = new dsMain();
         customerTableAdapter customerAdapter = new customerTableAdapter();
 
@@ -34,7 +33,7 @@ namespace PjApi.Controllers
             catch (Exception ex)
             {
                 m = new ResponseMessage(false, ex.Message);
-                errorAdapter.Insert("CustomerController: " + ex.Message);
+                CatalogAccessController.CatalogAccess.Log_Error("CustomerController: " + ex.Message);
             }
             return Ok(m);
         }
@@ -55,7 +54,7 @@ namespace PjApi.Controllers
             catch (Exception ex)
             {
                 m = new ResponseMessage(false, ex.Message);
-                errorAdapter.Insert("CustomerController: " + ex.Message);
+                CatalogAccessController.CatalogAccess.Log_Error("CustomerController: " + ex.Message);
             }
             return Ok(m);
         }
@@ -82,7 +81,7 @@ namespace PjApi.Controllers
             }
             catch (Exception ex)
             {
-                errorAdapter.Insert("CustomerController: " + ex.Message);
+                CatalogAccessController.CatalogAccess.Log_Error("CustomerController: " + ex.Message);
                 return NotFound();
             }
         }

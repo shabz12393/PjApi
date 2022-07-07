@@ -15,7 +15,6 @@ namespace PjApi.Controllers
     {
         customer_bookingsTableAdapter bookingAdapter = new customer_bookingsTableAdapter();
         getPaymentsForMobileTableAdapter paymentAdapter = new getPaymentsForMobileTableAdapter();
-        errorsTableAdapter errorAdapter = new errorsTableAdapter();
         dsMain ds = new dsMain();
         dsProc dsproc = new dsProc();
         [HttpGet]
@@ -44,7 +43,7 @@ namespace PjApi.Controllers
             }
             catch (Exception ex)
             {
-                errorAdapter.Insert("ServiceController: " + ex.Message);
+                CatalogAccessController.CatalogAccess.Log_Error("PaymentController: " + ex.Message);
                 return NotFound();
             }
         }

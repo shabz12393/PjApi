@@ -67,7 +67,7 @@ namespace PjApi.Models
         }
         public int customerServiceId { get; set; }
         public int bookingId { get; set; }
-        public int receptionId { get; set; }
+        public int stylistId { get; set; }
         public int serviceId { get; set; }
         public int seatId { get; set; }
         public string timeIn { get; set; }
@@ -109,7 +109,15 @@ namespace PjApi.Models
         public string service { get; set; }
         public int price { get; set; }
     }
+    public class Seat
+    {
+        public Seat()
+        {
 
+        }
+        public int seatId { get; set; }
+        public string seat { get; set; }
+    }
     public class Customers
     {
         public Customers()
@@ -123,6 +131,20 @@ namespace PjApi.Models
         public string email { get; set; }
         public string gender { get; set; }
         public string notes { get; set; }
+
+    }
+
+    public class Staff
+    {
+        public Staff()
+        {
+
+        }
+        public int staffId { get; set; }
+        public string fullName { get; set; }
+        public string telephone { get; set; }
+        public string email { get; set; }
+        public string gender { get; set; }
 
     }
     public class Sale
